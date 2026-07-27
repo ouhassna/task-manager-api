@@ -33,3 +33,21 @@ export async function POST(request) {
     return failure("Something went wrong", 500);
   }
 }
+
+export async function GET(request) {
+    let userId;
+    try {
+      userId = verifyAuth(request);
+    } catch (error) {
+      if (error instanceof AppError) return failure(error.message, error.status);
+      return failure("Authentication failed", 401);
+    }
+  
+    try {
+      const tasks = await getUserTasks(userId);
+      return success(tasks, 200);
+    } catch (error) {
+      console.error(error);
+      return failure("Something went wrong", 500);
+    }
+  }
