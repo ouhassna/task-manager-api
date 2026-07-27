@@ -38,7 +38,7 @@ security discipline you'd expect from a production client project.
 ## Running locally
 
 \`\`\`bash
-git clone https://github.com/ouhassna/task-manager-api task-manager
+git clone https://github.com/ouhassna/task-manager-api
 cd task-manager
 npm install
 
