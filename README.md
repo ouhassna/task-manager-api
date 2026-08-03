@@ -5,6 +5,7 @@ Users register, log in, and manage their own tasks — with the same
 security discipline you'd expect from a production client project.
 
 ## Tech Stack
+
 Next.js (App Router) · Prisma · SQLite · JWT · bcrypt · Zod
 
 ## Features
@@ -32,29 +33,60 @@ Next.js (App Router) · Prisma · SQLite · JWT · bcrypt · Zod
 
 ## Getting Started
 
-\`\`\`bash
+```bash
 git clone https://github.com/ouhassna/task-manager-api
-cd task-manager
+cd task-manager-api
 npm install
+```
+
+Create a `.env` file in the project root:
+
+```env
+DATABASE_URL="file:./manager.db"
+JWT_SECRET="<generate one below>"
+```
+
+Generate a secure random JWT secret:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Then run the migration and start the server:
+
+```bash
 npx prisma migrate dev
 npm run dev
-\`\`\`
+```
+
+The API is now running at `http://localhost:3000`.
 
 ## API Endpoints
 
 | Method | Route | Description | Auth required |
 |---|---|---|---|
-| POST | /api/register | Create a new user | No |
-| POST | /api/login | Log in, returns JWT | No |
+| POST | /api/auth/register | Create a new user | No |
+| POST | /api/auth/login | Log in, returns JWT | No |
 | POST | /api/tasks | Create a task | Yes |
 | GET | /api/tasks | List your tasks | Yes |
 | PUT | /api/tasks/:id | Update a task (owner only) | Yes |
 | DELETE | /api/tasks/:id | Delete a task (owner only) | Yes |
 
+Protected routes require an `Authorization: Bearer <token>` header, using
+the token returned from `/api/auth/login`.
+
 ## Testing
 
-A Postman collection is included (`task-manager.postman_collection.json`) — import it and test every endpoint in under 2 minutes.
+A Postman collection is included (`task-manager.postman_collection.json`) —
+import it and test every endpoint in under 2 minutes. It includes a
+dedicated "Security Test - IDOR" folder that reproduces the exact attack
+sequence: register a second user, create a task as them, then attempt to
+edit/delete it using the first user's token.
 
 ## Why I built it this way
 
-This project isn't just a CRUD exercise — I hold an eJPT (eLearnSecurity Junior Penetration Tester) certification, and I built this the way I'd want a client's backend built: secure by default, not patched after the fact. The security notes table above isn't decoration — every row was manually tested, not assumed.
+This project isn't just a CRUD exercise — I hold an eJPT (eLearnSecurity
+Junior Penetration Tester) certification, and I built this the way I'd
+want a client's backend built: secure by default, not patched after the
+fact. The security notes table above isn't decoration — every row was
+manually tested, not assumed.
